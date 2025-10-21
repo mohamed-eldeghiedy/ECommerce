@@ -1,6 +1,8 @@
 ﻿using ECommerce.Domain.Contracts;
 using ECommerce.Persistence.Context;
 using ECommerce.Persistence.DbInitializers;
+using ECommerce.Persistence.Repositories;
+
 
 //using ECommerce.Persistence.DbInitializers;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +27,8 @@ namespace ECommerce.Persistence.DependencyInjection
                 options.UseSqlServer(connection);
 
             });
+
+            services.AddScoped<IUnitOfWork,UnitOfWork>();
             services.AddScoped<IDbInitializer, DbInitializer>();
             return services;
         }
