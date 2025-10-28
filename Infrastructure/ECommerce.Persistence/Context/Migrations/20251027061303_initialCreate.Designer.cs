@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerce.Persistence.Context.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251020185301_AddTables")]
-    partial class AddTables
+    [Migration("20251027061303_initialCreate")]
+    partial class initialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

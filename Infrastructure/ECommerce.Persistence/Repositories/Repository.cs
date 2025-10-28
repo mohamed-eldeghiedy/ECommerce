@@ -14,25 +14,51 @@ namespace ECommerce.Persistence.Repositories
         : IRepository<TEntity, TKey>
         where TEntity : Entity<TKey>
     {
+
+        private readonly DbSet<TEntity> _dbSet = dbContext.Set<TEntity>();
+
+
         public void Add(TEntity entity) 
-            =>dbContext.Set<TEntity>().Add(entity);
+            =>_dbSet.Add(entity);
 
         public async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken)
-            => await dbContext.Set<TEntity>()
+            => await _dbSet
             .ToListAsync(cancellationToken);
 
 
         public async Task<TEntity?> GetByIdAsync(TKey id, CancellationToken cancellationToken)
-            => await dbContext.Set<TEntity>()
+            => await _dbSet
             .FindAsync(id , cancellationToken);
 
 
 
         public void Remove(TEntity entity)
-            => dbContext.Set<TEntity>().Remove(entity);
+            => _dbSet.Remove(entity);
 
-        public void Update(TEntity entity)
-            => dbContext.Set<TEntity>().Update(entity);
+        public void Update(TEntity entity) 
+            => _dbSet.Update(entity);
 
+
+
+        public async Task<IEnumerable<TEntity>> GetAllAsync( ISpecification<TEntity> specification
+            , CancellationToken cancellationToken)
+        {
+            return await _dbSet.ApplySpecification(specification)
+                    .ToListAsync(cancellationToken);
+        }
+
+        public async Task<TEntity?> GetAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken)
+        {
+            return await _dbSet
+                .ApplySpecification(specification)
+                .FirstOrDefaultAsync(cancellationToken);
+        }
+
+        public Task<int> CountAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken)
+        {
+           return _dbSet
+                .ApplySpecification(specification)
+                .CountAsync(cancellationToken);
+        }
     }
 }

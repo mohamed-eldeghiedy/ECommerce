@@ -1,4 +1,6 @@
-﻿using ECommerce.ServiceAbstraction;
+﻿using ECommerce.Domain.Entities.Products;
+using ECommerce.ServiceAbstraction;
+using ECommerce.Shared.DataTransfareObjects;
 using ECommerce.Shared.DataTransfareObjects.Products;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -15,9 +17,9 @@ namespace ECommerce.presentation.API.Controllers
 
         [HttpGet]
 
-        public async Task<ActionResult<IEnumerable<ProductResponse>>> GetProducts( CancellationToken cancellationToken = default)
+        public async Task<ActionResult<PaginatedResult<ProductResponse>>> GetProducts([FromQuery]ProductQueryParameters Parameters, CancellationToken cancellationToken = default)
         {
-            var respones = await productService.GetProductsAsync(cancellationToken);
+            var respones = await productService.GetProductsAsync(Parameters , cancellationToken);
             return Ok(respones);
         
         }

@@ -1,4 +1,5 @@
 ﻿using ECommerce.Domain.Entities;
+using ECommerce.Persistence.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,11 @@ namespace ECommerce.Domain.Contracts
         void Update(TEntity entity);
 
         Task<TEntity?> GetByIdAsync(TKey id , CancellationToken cancellationToken);
+        Task<TEntity?> GetAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken);
         Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken);
+
+        Task<IEnumerable<TEntity>> GetAllAsync( ISpecification<TEntity> specification,CancellationToken cancellationToken);
+
+        Task<int> CountAsync( ISpecification<TEntity> specification , CancellationToken cancellationToken);
     }
 }

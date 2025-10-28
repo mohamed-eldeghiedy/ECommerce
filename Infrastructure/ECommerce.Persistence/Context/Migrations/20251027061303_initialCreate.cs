@@ -5,7 +5,7 @@
 namespace ECommerce.Persistence.Context.Migrations
 {
     /// <inheritdoc />
-    public partial class AddTables : Migration
+    public partial class initialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
