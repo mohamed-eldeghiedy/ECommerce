@@ -14,6 +14,7 @@ namespace ECommerce.Service.DependencyInjection
 
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
+            services.AddScoped<IBasketService, BasketService>();
             services.AddScoped<IProductService  , ProductService>();
             services.AddAutoMapper(typeof(ApplicationServiceExtentions).Assembly);
             return services;

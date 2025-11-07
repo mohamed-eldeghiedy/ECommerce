@@ -1,4 +1,5 @@
 ﻿using ECommerce.Domain.Entities.Products;
+using ECommerce.presentation.API.Attributes;
 using ECommerce.ServiceAbstraction;
 using ECommerce.Shared.DataTransfareObjects;
 using ECommerce.Shared.DataTransfareObjects.Products;
@@ -14,7 +15,7 @@ namespace ECommerce.presentation.API.Controllers
 {
     public class ProductController ( IProductService productService) : APIBaseController
     {
-
+        [RedisCash]
         [HttpGet]
 
         public async Task<ActionResult<PaginatedResult<ProductResponse>>> GetProducts([FromQuery]ProductQueryParameters Parameters, CancellationToken cancellationToken = default)
