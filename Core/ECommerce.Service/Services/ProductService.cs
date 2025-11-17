@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ECommerce.Domain.Contracts;
 using ECommerce.Domain.Entities.Products;
+using ECommerce.Service.Exceptions;
 using ECommerce.Service.Specification;
 using ECommerce.ServiceAbstraction;
 using ECommerce.Shared.DataTransfareObjects;
@@ -27,6 +28,8 @@ namespace ECommerce.Service.Services
         {
            var Product = await unitOfWork.GetRepository<Product, int>()
                 .GetAsync(new ProductWithBrandTypeSpecification(id) , cancellationToken);
+            if (Product == null)
+                throw new ProductNotFoundExecption(id);
             return mapper.Map<ProductResponse?>(Product);
         }
 

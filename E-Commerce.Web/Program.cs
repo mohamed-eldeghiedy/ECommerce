@@ -1,6 +1,9 @@
+using E_Commerce.Web.Handlers;
+using E_Commerce.Web.Middlewares;
+using ECommerce.Domain.Contracts;
 using ECommerce.Persistence.DependencyInjection;
 using ECommerce.Service.DependencyInjection;
-using ECommerce.Domain.Contracts;
+using Microsoft.AspNetCore.Mvc;
 
 namespace E_Commerce.Web
 {
@@ -17,6 +20,30 @@ namespace E_Commerce.Web
 
             builder.Services.AddControllers();           
             builder.Services.AddApplicationServices();
+            builder.Services.AddExceptionHandler<NotFoundExceptionHandler>();
+            builder.Services.AddProblemDetails();
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = context =>
+                {
+                    var errors = context.ModelState
+                        .Where(e => e.Value.Errors.Count > 0)
+                        .ToDictionary(
+                            kvp => kvp.Key,
+                            kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                        );
+                    var problems = new ProblemDetails
+                    {
+                        
+                        Title = "Validation Error",
+                        Status = StatusCodes.Status400BadRequest,
+                        Detail = "See the errors property for details.",
+                        Extensions = { { "errors", errors } }
+                    };
+                    return new BadRequestObjectResult(problems);
+                    
+                };
+            });
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -29,6 +56,9 @@ namespace E_Commerce.Web
             var initializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
             await initializer.InitializerAsync();
 
+            app.UseExceptionHandler();
+            app.UseCustomExceptionHandler();    
+            //app.UseMiddleware<GlobalExceptionHandler>();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
