@@ -30,7 +30,7 @@ namespace ECommerce.presentation.API.Controllers
         public async Task<ActionResult<ProductResponse>> Get( int id ,CancellationToken cancellationToken = default)
         {
             var respones = await productService.GetByIdAsync( id , cancellationToken);
-            return Ok(respones) ;
+            return HandleResult(respones) ;
         }
 
         [HttpGet("brands")]

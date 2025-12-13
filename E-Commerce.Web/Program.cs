@@ -1,9 +1,14 @@
 using E_Commerce.Web.Handlers;
 using E_Commerce.Web.Middlewares;
 using ECommerce.Domain.Contracts;
+using ECommerce.Infrastructure.Service;
 using ECommerce.Persistence.DependencyInjection;
 using ECommerce.Service.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace E_Commerce.Web
 {
@@ -18,8 +23,10 @@ namespace E_Commerce.Web
 
             builder.Services.AddPersistenceServices(builder.Configuration);
 
-            builder.Services.AddControllers();           
+            builder.Services.AddControllers();
             builder.Services.AddApplicationServices();
+            builder.Services.AddInfrastructureService(builder.Configuration);
+            builder.Services.Configure<JWTOptions>(builder.Configuration.GetSection(JWTOptions.SectionName));
             builder.Services.AddExceptionHandler<NotFoundExceptionHandler>();
             builder.Services.AddProblemDetails();
             builder.Services.Configure<ApiBehaviorOptions>(options =>
@@ -48,13 +55,34 @@ namespace E_Commerce.Web
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddAuthentication(options=>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options=>
+            {
+                var Jwt = builder.Configuration.GetSection(JWTOptions.SectionName).Get<JWTOptions>();
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = Jwt.Issuer,
+                    ValidAudience = Jwt.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])),
+                    
 
+
+                };
+            });
             var app = builder.Build();
 
 
             var scope = app.Services.CreateScope();
             var initializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
             await initializer.InitializerAsync();
+            await initializer.InitializerAuthDbAsync();
 
             app.UseExceptionHandler();
             app.UseCustomExceptionHandler();    
@@ -67,7 +95,7 @@ namespace E_Commerce.Web
             }
             app.UseStaticFiles();
             app.UseHttpsRedirection();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

@@ -9,5 +9,6 @@ namespace ECommerce.Domain.Contracts
     public interface IDbInitializer
     {
         Task InitializerAsync();
+        Task InitializerAuthDbAsync();
     }
 }

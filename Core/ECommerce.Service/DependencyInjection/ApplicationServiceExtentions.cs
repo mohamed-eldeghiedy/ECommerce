@@ -17,6 +17,7 @@ namespace ECommerce.Service.DependencyInjection
             services.AddScoped<IBasketService, BasketService>();
             services.AddScoped<IProductService  , ProductService>();
             services.AddAutoMapper(typeof(ApplicationServiceExtentions).Assembly);
+            services.AddScoped<IAuthService, AuthServices>();
             return services;
         }
     }

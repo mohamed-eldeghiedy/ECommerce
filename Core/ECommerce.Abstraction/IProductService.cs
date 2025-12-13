@@ -1,4 +1,5 @@
 ﻿using ECommerce.Domain.Entities.Products;
+using ECommerce.ServiceAbstraction.Common;
 using ECommerce.Shared.DataTransfareObjects;
 using ECommerce.Shared.DataTransfareObjects.Products;
 using System;
@@ -11,7 +12,7 @@ namespace ECommerce.ServiceAbstraction
 {
     public interface IProductService
     {
-        Task<ProductResponse?> GetByIdAsync(int id , CancellationToken cancellationToken );
+        Task<Result<ProductResponse?>> GetByIdAsync(int id , CancellationToken cancellationToken );
         Task<PaginatedResult<ProductResponse>> GetProductsAsync( ProductQueryParameters parameters,CancellationToken cancellationToken);
         Task<IEnumerable<TypeResponse>> GetTypesAsync(CancellationToken cancellationToken);
         Task<IEnumerable<BrandResponse>> GetBrandsAsync(CancellationToken cancellationToken);

@@ -4,6 +4,7 @@ using ECommerce.Domain.Entities.Products;
 using ECommerce.Service.Exceptions;
 using ECommerce.Service.Specification;
 using ECommerce.ServiceAbstraction;
+using ECommerce.ServiceAbstraction.Common;
 using ECommerce.Shared.DataTransfareObjects;
 using ECommerce.Shared.DataTransfareObjects.Products;
 using System;
@@ -12,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Error = ECommerce.ServiceAbstraction.Common.Error;
 
 namespace ECommerce.Service.Services
 {
@@ -24,12 +26,12 @@ namespace ECommerce.Service.Services
             return mapper.Map<IEnumerable<BrandResponse>>(brands);
         }
 
-        public async Task<ProductResponse?> GetByIdAsync(int id, CancellationToken cancellationToken)
+        public async Task<Result<ProductResponse>> GetByIdAsync(int id, CancellationToken cancellationToken)
         {
            var Product = await unitOfWork.GetRepository<Product, int>()
                 .GetAsync(new ProductWithBrandTypeSpecification(id) , cancellationToken);
             if (Product == null)
-                throw new ProductNotFoundExecption(id);
+                return Error.NotFound();
             return mapper.Map<ProductResponse?>(Product);
         }
 
