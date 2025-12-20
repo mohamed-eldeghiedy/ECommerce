@@ -14,6 +14,9 @@ namespace ECommerce.Service.Services
 {
     internal class AuthServices(UserManager<ApplicationUser> userManager , ITokenService tokenService ) : IAuthService
     {
+        public async Task<bool> CheckEmailAsync(string email)
+       => await userManager.FindByEmailAsync(email) != null;
+
         public async Task<Result<UserResponse>> LoginAsync(LoginRequest loginRequest)
         {
            var user = await userManager.FindByEmailAsync(loginRequest.Email);

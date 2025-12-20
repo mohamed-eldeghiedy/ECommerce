@@ -25,5 +25,12 @@ namespace ECommerce.presentation.API.Controllers
             var result = await authService.LoginAsync(loginRequest);
             return HandleResult(result);
         }
+
+        [HttpGet("CheckEmail")]
+        public async Task<ActionResult<bool>> CheckEmail([FromQuery] string email)
+        {
+            var result = await authService.CheckEmailAsync(email);
+            return Ok(result);
+        }
     }
 }

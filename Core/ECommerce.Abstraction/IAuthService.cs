@@ -12,5 +12,6 @@ namespace ECommerce.ServiceAbstraction
     {
         Task<Result<UserResponse>> LoginAsync(LoginRequest loginRequest);
         Task<Result<UserResponse>> RegisterAsync(RegisterRequest registerRequest);
+        Task<bool> CheckEmailAsync(string email);
     }
 }
