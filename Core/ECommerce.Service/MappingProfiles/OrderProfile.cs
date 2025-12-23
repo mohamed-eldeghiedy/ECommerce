@@ -31,6 +31,9 @@ namespace ECommerce.Service.MappingProfiles
                     opt => opt.MapFrom(src => src.Product.Name))
                 .ForMember(dest => dest.PictureUrl,
                     opt => opt.MapFrom(src => src.Product.PictureUrl));
+
+            CreateMap<DeliveryMethod, DeliveryMethodResponse>()
+                .ForMember(d=>d.Cost , o=>o.MapFrom(s=>s.Price) );
         }
     }
 }

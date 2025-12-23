@@ -21,10 +21,10 @@ namespace ECommerce.Service.Services
     internal class OrderService(IUnitOfWork unitOfWork 
         , IBasketRepository basketRepository
         , IMapper mapper 
-        , CancellationToken cancellationToken)
+        )
         : IOrderService
     {
-        public async Task<Result<OrderResponse>> CreateAsync(OrderRequest request, string email)
+        public async Task<Result<OrderResponse>> CreateAsync(OrderRequest request, string email , CancellationToken cancellationToken)
         {
            var basket= await basketRepository.GetAsync(request.basketId);
             if (basket is null)
@@ -85,5 +85,27 @@ namespace ECommerce.Service.Services
             return mapper.Map<OrderResponse>(order);
 
         }
+
+        public async Task<Result<OrderResponse>> GetByIdAsync(string email , Guid id , CancellationToken cancellationToken )
+        {
+            var order = await unitOfWork.GetRepository<Order, Guid>()
+                .GetAsync(new OrderByIdAndEmailSpecification( email , id), cancellationToken);
+            if (order is null )
+                return Error.NotFound(" Order Not Found", $"Order with id {id} was not Found");
+            return mapper.Map<OrderResponse>(order);
+        }
+        public async Task<IEnumerable<OrderResponse>> GetByUserEmailAsync( string email , CancellationToken cancellationToken)
+        {             var orders = await unitOfWork.GetRepository<Order, Guid>()
+                .GetAllAsync(new OrdersByEmailSpecification(email ), cancellationToken );
+            return mapper.Map<IEnumerable<OrderResponse>>(orders);
+        }
+        public async Task<IEnumerable<DeliveryMethodResponse>> GetDeliveryMethodsAsync(CancellationToken cancellationToken)
+        {
+            var methods = await unitOfWork.GetRepository<DeliveryMethod, int>()
+                .GetAllAsync(cancellationToken: cancellationToken);
+            return mapper.Map<IEnumerable<DeliveryMethodResponse>>(methods);
+        }
+
+       
     }
 }
